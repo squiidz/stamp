@@ -1,0 +1,4 @@
+stamp
+=====
+
+Geolocation stamp application
