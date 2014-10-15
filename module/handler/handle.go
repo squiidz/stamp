@@ -5,10 +5,10 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"html/template"
-	"fmt"
+	//"fmt"
 	"log"
 	"net/http"
-	"math"
+	//"math"
 )
 
 type Users struct {
