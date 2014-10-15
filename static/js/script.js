@@ -74,7 +74,7 @@
 
 		$interval(function() {
 			$scope.getPosition();
-		}, 500);
+		}, 2000); // Refresh Time
 
 
 		var errorPosition = function(error) {

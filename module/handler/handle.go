@@ -5,8 +5,10 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"html/template"
+	"fmt"
 	"log"
 	"net/http"
+	"math"
 )
 
 type Users struct {
@@ -15,15 +17,15 @@ type Users struct {
 }
 
 type Location struct {
-	Longitude float32
-	Latitude  float32
+	Longitude float64
+	Latitude  float64
 }
 
 type Message struct {
 	Friends   string
 	Message   string
-	Longitude float32
-	Latitude  float32
+	Longitude float64
+	Latitude  float64
 }
 
 var (
@@ -75,7 +77,7 @@ func LocationHandler(rw http.ResponseWriter, req *http.Request) {
 	loc := Location{}
 	data := json.NewDecoder(req.Body)
 	data.Decode(&loc)
-	//log.Println(loc.Latitude)
+	log.Println(loc.Latitude)
 	session, err := mgo.Dial("localhost")
 	defer session.Close()
 	if err != nil {
@@ -96,10 +98,12 @@ func LocationHandler(rw http.ResponseWriter, req *http.Request) {
 			log.Println(mess.Message)
 			enco.Encode(&mess)
 			c.Remove(bson.M{"friends": Connected, "message": mess.Message})
+			/*
 			log.Println("{Message Position}")
 			log.Println("[Lat] : ",mess.Latitude, "[Long] : ", mess.Longitude)
 			log.Println("{User Postion}")
 			log.Println("[Lat] : ", loc.Latitude, "[Long] : ", loc.Longitude)
+			*/
 		}
 	}
 
@@ -131,18 +135,28 @@ func CheckUser(user Users) bool {
 }
 
 func PositionValid(message *Message, location *Location) bool{
-	var zone float32 = 0.0000030
-	log.Println(zone)
+	var zone float64 = 0.0000200
+	//log.Println(zone)
+	/*location.Latitude = math.Abs(location.Latitude)
+	location.Longitude = math.Abs(location.Longitude)
+	message.Latitude = math.Abs(message.Latitude)
+	message.Longitude = math.Abs(message.Longitude)*/
+
 	log.Println("Check Validity")
-	if (location.Latitude - message.Latitude) > zone || (location.Latitude - message.Latitude) < (zone - zone*2) && (location.Latitude - message.Latitude) > zone{
-		if (location.Longitude - message.Longitude) > zone || (location.Longitude - message.Longitude) > (zone - zone*2) && (location.Longitude - message.Longitude) > zone {
-			log.Println("TRUE")
+	if (location.Latitude - message.Latitude) < zone || (location.Latitude - message.Latitude) > (zone - zone*2) && (location.Latitude - message.Latitude) < zone{
+		if (location.Longitude - message.Longitude) < zone || (location.Longitude - message.Longitude) > (zone - zone*2) && (location.Longitude - message.Longitude) < zone {
+			/*log.Println("TRUE")
+			fmt.Printf("DIFF LAT: %.6f\n", (location.Latitude - message.Latitude))
+			fmt.Printf("DIFF LONG: %.6f\n", (location.Longitude - message.Longitude))*/
 			return true
 		}else {
+			/*fmt.Printf("DIFF : %.6f\n", (location.Longitude - message.Longitude))
+			log.Println("LONGITUDE FALSE")*/
 			return false
 		}
 	}else {
-		log.Println("FALSE")
+		/*fmt.Printf("DIFF : %.6f\n", (location.Latitude - message.Latitude))
+		log.Println("LATITUDE FALSE")*/
 		return false
 	}
 }
