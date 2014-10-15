@@ -77,7 +77,7 @@ func LocationHandler(rw http.ResponseWriter, req *http.Request) {
 	loc := Location{}
 	data := json.NewDecoder(req.Body)
 	data.Decode(&loc)
-	log.Println(loc.Latitude)
+	
 	session, err := mgo.Dial("localhost")
 	defer session.Close()
 	if err != nil {
