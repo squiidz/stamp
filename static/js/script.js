@@ -6,10 +6,10 @@
 		$scope.showForm = false;
 		$scope.newTag = false;
 		$scope.notification = {
-			visible: false, 
+			visible: false,
 			text: ""
 		};
-		$scope.messages;
+		$scope.messages = [];
 
 		$scope.getMessage = function() {
 			$scope.newTag = true;
@@ -26,7 +26,7 @@
 				return "Browser not supported geolocation";
 			};
 		};
-		
+
 		/*$scope.getMessage = function() {
 			if (navigator.geolocation && $scope.newTag) {
 				navigator.geolocation.getCurrentPosition(sendMessage, errorPosition);
@@ -49,11 +49,11 @@
 			};
 			$http.post('place', $scope.place).success(function() {
 				$scope.notification = {visible: true, text : "Tag Sent Succesfully"};
-				
+
 				setTimeout(function() {
 					$scope.notification.visible = false;
 					$scope.showForm = false;
-					$scope.$apply(); 
+					$scope.$apply();
 				}, 3000);
 			});
 		};
@@ -61,27 +61,28 @@
 
 		var sendPosition = function(position) {
 			var current_position = position.coords;
+			console.log($scope.messages);
 			$http.post('location', current_position).success(function(data) {
-				if (data.Message) {
-					$scope.messages = data.Message;
+				if(data.Message) {
+					$scope.messages.push(data);
 					console.log(data);
 				};
 			});
 			console.log("COORDS SENT");
 		};
 
-		
+
 		$interval(function() {
 			$scope.getPosition();
-		}, 2000);
-	
+		}, 500);
+
 
 		var errorPosition = function(error) {
 			$scope.err = error;
 			console.log(error);
 		};
 
-		
+
 
 	});
 
