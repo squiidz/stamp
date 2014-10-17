@@ -42,10 +42,18 @@
 
 		var sendMessage = function(position) {
 			$scope.place = {
-				Friends: $("#friendName").val(),
+				From: {
+					Username: $('#active').val(),
+				},
+				To: [{
+						Username: $("#friendName").val(),
+					},
+				],
 				Message: $("#message").val(),
-				Longitude: position.coords.longitude,
-				Latitude: position.coords.latitude
+				Position : {
+					Longitude: position.coords.longitude,
+					Latitude: position.coords.latitude
+				}
 			};
 			$http.post('place', $scope.place).success(function() {
 				$scope.notification = {visible: true, text : "Tag Sent Succesfully"};
@@ -54,18 +62,19 @@
 					$scope.notification.visible = false;
 					$scope.showForm = false;
 					$scope.$apply();
-				}, 3000);
+				}, 5000);
 			});
 		};
 
 
 		var sendPosition = function(position) {
 			var current_position = position.coords;
-			console.log($scope.messages);
+			//console.log($scope.messages);
 			$http.post('location', current_position).success(function(data) {
+				//console.log(data);
 				if(data.Message) {
 					$scope.messages.push(data);
-					console.log(data);
+					//console.log(data);
 				};
 			});
 			console.log("COORDS SENT");
@@ -74,7 +83,7 @@
 
 		$interval(function() {
 			$scope.getPosition();
-		}, 2000); // Refresh Time
+		}, 2500); // Refresh Time
 
 
 		var errorPosition = function(error) {

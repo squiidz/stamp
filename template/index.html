@@ -13,7 +13,8 @@
 		<div ng-controller="BuildPage as build">
 			<p id="notification" ng-show="notification.visible">{{notification.text}}</p>
 			<div class="jumbotron">
-				<p>Home Page</p>
+				<p>((.))</p>
+				<input id="active" type="text" value="((.))" hidden/>
 				<button ng-click='getMessage()' class="btn btn-primary">send tag</button>
 				<button ng-click='showForm = true' class="btn btn-success">Create a new tag</button>
 
@@ -25,7 +26,7 @@
 				<div class="jumbotron">
 					<h3>New Message</h3>
 					<div class="box" ng-repeat="message in messages">
-						<h4>From : {{message.Friends}}</h4>
+						<h4>From : {{message.From.Username}}</h4>
 						<blockquote>{{message.Message}}</blockquote>
 					</div>
 				</div>
