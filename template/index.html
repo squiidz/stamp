@@ -2,36 +2,40 @@
 <html ng-app="lifestamp">
 	<head>
 		<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="static/css/animate.css">
 		<link rel="stylesheet" type="text/css" href="static/css/style.css">
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="static/js/angular.min.js"></script>
+		<script type="text/javascript" src="static/js/notify.min.js"></script>
 		<script type="text/javascript" src="static/js/script.js"></script>
 	</head>
 	<body>
-		<div ng-controller="BuildPage as build">
-			<p id="notification" ng-show="notification.visible">{{notification.text}}</p>
+		<div class="display" ng-controller="BuildPage as build">
+			<p class="animated bounceInDown" id="notification" ng-show="notification.visible">{{notification.text}}</p>
 			<div class="jumbotron">
-				<p>((.))</p>
+				<h1 class="logo" >#!Stamp</h1>
+				<p id="headword">Welcome back ((.))</p>
 				<input id="active" type="text" value="((.))" hidden/>
-				<button ng-click='getMessage()' class="btn btn-primary">send tag</button>
-				<button ng-click='showForm = true' class="btn btn-success">Create a new tag</button>
+				
+				<button id="newTag" ng-click='activate()' class="btn btn-primary">New Tag</button>
 
-				<div ng-show="showForm">
+				<div class="newTag" ng-show="showForm">
 					<input class="form-control" id="friendName" type="text" placeholder="Friend Name"/>
-					<textarea class="form-control" id="message" type="text" placeholder="Message"></textarea>
+					<textarea class="form-control" id="message" type="text" placeholder="Message" cols="2" rows="2"></textarea>
+					<button id="sendTagBtn" ng-click='getMessage()' class="btn btn-primary">Send</button>
 				</div>
-
-				<div class="jumbotron">
+			</div>
+				<div class="col-md-6">
 					<h3>New Message</h3>
-					<div class="box" ng-repeat="message in messages">
+					<div class="box animated bounceInRight" ng-repeat="message in messages">
 						<h4>From : {{message.From.Username}}</h4>
-						<blockquote>{{message.Message}}</blockquote>
+						<blockquote id="content">{{message.Message}}</blockquote>
+						<!-- <img src="{{message.Picture}}"/>  BACK-END NOT IMPLEMENTED -->
+						<button type="button" class="btn btn-primary form-control">save</button>
 					</div>
 				</div>
-
-			</div>
 		</div>
 	</body>
 </html>

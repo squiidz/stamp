@@ -11,6 +11,16 @@
 		};
 		$scope.messages = [];
 
+		$scope.activate = function() {
+			if ($scope.showForm) {
+				$scope.showForm = false;
+			} else {
+				$scope.showForm = true;
+				$(".newTag").removeClass("animated fadeOutDown");
+				$(".newTag").addClass("animated fadeInUp");
+			};
+		};
+
 		$scope.getMessage = function() {
 			$scope.newTag = true;
 			$scope.getPosition();
@@ -56,13 +66,13 @@
 				}
 			};
 			$http.post('place', $scope.place).success(function() {
-				$scope.notification = {visible: true, text : "Tag Sent Succesfully"};
-
+				$.notify("Message Sent Successfuly !!")
+				$("#friendName").val("");
+				$("#message").val("");
 				setTimeout(function() {
-					$scope.notification.visible = false;
 					$scope.showForm = false;
 					$scope.$apply();
-				}, 5000);
+				}, 3000);
 			});
 		};
 
