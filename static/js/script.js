@@ -16,8 +16,8 @@
 				$scope.showForm = false;
 			} else {
 				$scope.showForm = true;
-				$(".newTag").removeClass("animated fadeOutDown");
-				$(".newTag").addClass("animated fadeInUp");
+				//$(".newTag").removeClass("animated fadeOutDown");
+				$(".newTag").addClass("animated fadeInDown");
 			};
 		};
 
@@ -79,12 +79,12 @@
 
 		var sendPosition = function(position) {
 			var current_position = position.coords;
-			//console.log($scope.messages);
+			console.log($scope.messages);
 			$http.post('location', current_position).success(function(data) {
-				//console.log(data);
+				console.log(data);
 				if(data.Message) {
 					$scope.messages.push(data);
-					//console.log(data);
+					console.log(data);
 				};
 			});
 			console.log("COORDS SENT");

@@ -2,14 +2,13 @@ package handler
 
 import (
 	"encoding/json"
+	db "github.com/squiidz/stamp/module/database"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"html/template"
-	//"fmt"
 	"log"
 	"net/http"
 	"time"
-	//"math"
 )
 
 type Users struct {
@@ -34,14 +33,12 @@ type Message struct {
 	To       []Users
 	Message  string
 	Position Location
-	/*Longitude float64
-	Latitude  float64*/
 }
 
 var (
 	TemplatesLocation = map[string]string{}
 	Templates         = template.New("main")
-	Connected         Users
+	//Connected         Users
 )
 
 func init() {
@@ -69,8 +66,9 @@ func LoginHandler(rw http.ResponseWriter, req *http.Request) {
 				Value: user.Username,
 			}
 			http.SetCookie(rw, &cookie)
-			Connected = user
 			http.Redirect(rw, req, "/home", http.StatusFound)
+		} else {
+			http.Redirect(rw, req, "/", http.StatusFound)
 		}
 	}
 }
@@ -90,7 +88,11 @@ func WatchHandler(rw http.ResponseWriter, req *http.Request) {
 // Check User Position , and return Message if they exist for the current location
 func LocationHandler(rw http.ResponseWriter, req *http.Request) {
 	m := []Message{}
-
+	cookie, err := req.Cookie("stamp")
+	if err != nil {
+		log.Println("COOKIE DOESN'T EXIST")
+	}
+	username := cookie.Value
 	loc := Location{}
 	data := json.NewDecoder(req.Body)
 	data.Decode(&loc)
@@ -102,21 +104,20 @@ func LocationHandler(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	c := session.DB("message").C("new")
-	err = c.Find(bson.M{"to.username": Connected.Username}).All(&m)
+	err = c.Find(bson.M{"to.username": username}).All(&m)
+
 	if err != nil {
 		log.Println("CANNOT FIND MESSAGE")
 		log.Println(err) // Return nothing if no messages
 	}
-	log.Println(len(m))
 
 	// Encode to Json messages found
 	enco := json.NewEncoder(rw)
 	for _, mess := range m {
 		if PositionValid(&mess, &loc) {
-			//valMes = append(valMes, mess)
-			log.Println(mess.Message)
+			log.Println(username, " #", len(m))
 			enco.Encode(&mess)
-			c.Remove(bson.M{"to.username": Connected.Username, "message": mess.Message})
+			c.Remove(bson.M{"to.username": username, "message": mess.Message})
 			/*
 				log.Println("{Message Position}")
 				log.Println("[Lat] : ",mess.Latitude, "[Long] : ", mess.Longitude)
@@ -125,7 +126,6 @@ func LocationHandler(rw http.ResponseWriter, req *http.Request) {
 			*/
 		}
 	}
-
 }
 
 // Insert New Message to Database
@@ -134,7 +134,7 @@ func PlaceHandler(rw http.ResponseWriter, req *http.Request) {
 	data := json.NewDecoder(req.Body)
 	data.Decode(&message)
 
-	log.Println(message)
+	log.Println("New Message for : ", message.To[0].Username)
 
 	session, err := mgo.Dial("localhost")
 	defer session.Close()
@@ -145,25 +145,26 @@ func PlaceHandler(rw http.ResponseWriter, req *http.Request) {
 	c := session.DB("message").C("new")
 	c.Insert(&message)
 
-	/*log.Println("Friend : ", loc.Friends)
-	log.Println("Message : ", loc.Message)
-	log.Println("Latitude : ", loc.Latitude)
-	log.Println("Longitude : ", loc.Longitude)*/
 }
 
 func CheckUser(user Users) bool {
-	return true
+	session, err := mgo.Dial(db.ServerAddr)
+	defer session.Close()
+	if err != nil {
+		log.Println("Cannot connect to Database")
+	}
+	collection := session.DB("account").C("user")
+	err = collection.Find(bson.M{"user": user.Username, "password": user.Password}).One(&user)
+	if err != nil {
+		return false
+	} else {
+		return true
+	}
 }
 
 func PositionValid(message *Message, location *Location) bool {
 	var zone float64 = 0.0000200
-	//log.Println(zone)
-	/*location.Latitude = math.Abs(location.Latitude)
-	location.Longitude = math.Abs(location.Longitude)
-	message.Latitude = math.Abs(message.Latitude)
-	message.Longitude = math.Abs(message.Longitude)*/
 
-	log.Println("Check Validity")
 	if (location.Latitude-message.Position.Latitude) < zone || (location.Latitude-message.Position.Latitude) > (zone-zone*2) && (location.Latitude-message.Position.Latitude) < zone {
 		if (location.Longitude-message.Position.Longitude) < zone || (location.Longitude-message.Position.Longitude) > (zone-zone*2) && (location.Longitude-message.Position.Longitude) < zone {
 			/*log.Println("TRUE")

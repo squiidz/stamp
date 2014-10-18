@@ -11,7 +11,7 @@ var port string
 var mux = http.NewServeMux()
 
 func init() {
-	portFlag := flag.String("port", ":80", "-port [8080]")
+	portFlag := flag.String("port", "8080", "-port [8080]")
 	flag.Parse()
 	port = ":" + *portFlag
 }
