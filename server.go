@@ -19,7 +19,6 @@ func init() {
 func main() {
 	mux.HandleFunc("/", hand.LoginHandler)
 	mux.HandleFunc("/home", hand.IndexHandler)
-	mux.HandleFunc("/watch", hand.WatchHandler)
 	mux.HandleFunc("/place", hand.PlaceHandler)
 	mux.HandleFunc("/location", hand.LocationHandler)
 
