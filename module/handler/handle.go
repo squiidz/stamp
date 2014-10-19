@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"github.com/gorilla/sessions"
 	db "github.com/squiidz/stamp/module/database"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -38,7 +39,7 @@ type Message struct {
 var (
 	TemplatesLocation = map[string]string{}
 	Templates         = template.New("main")
-	//Connected         Users
+	Store             = sessions.NewCookieStore([]byte("BigBangBazooka"))
 )
 
 func init() {
@@ -61,11 +62,16 @@ func LoginHandler(rw http.ResponseWriter, req *http.Request) {
 			Password: req.FormValue("password"),
 		}
 		if CheckUser(user) {
-			cookie := http.Cookie{
-				Name:  "stamp",
-				Value: user.Username,
-			}
-			http.SetCookie(rw, &cookie)
+			/*
+				cookie := http.Cookie{
+					Name:  "stamp",
+					Value: MakeSession(&user),
+				}
+				http.SetCookie(rw, &cookie)
+			*/
+			session, _ := Store.Get(req, "sessionCookie")
+			session.Values["name"] = user.Username
+			session.Save(req, rw)
 			http.Redirect(rw, req, "/home", http.StatusFound)
 		} else {
 			http.Redirect(rw, req, "/", http.StatusFound)
@@ -74,8 +80,8 @@ func LoginHandler(rw http.ResponseWriter, req *http.Request) {
 }
 
 func IndexHandler(rw http.ResponseWriter, req *http.Request) {
-	value, _ := req.Cookie("stamp")
-	data := value.Value
+	session, _ := Store.Get(req, "sessionCookie")
+	data := session.Values["name"].(string)
 	Templates.ExecuteTemplate(rw, "index.html", data)
 	SimpleLog(req)
 }
@@ -88,11 +94,13 @@ func WatchHandler(rw http.ResponseWriter, req *http.Request) {
 // Check User Position , and return Message if they exist for the current location
 func LocationHandler(rw http.ResponseWriter, req *http.Request) {
 	m := []Message{}
-	cookie, err := req.Cookie("stamp")
+	sessionC, _ := Store.Get(req, "sessionCookie")
+	log.Println(sessionC.Values["name"].(string))
+
 	if err != nil {
 		log.Println("COOKIE DOESN'T EXIST")
 	}
-	username := cookie.Value
+	username := sessionC.Values["name"].(string)
 	loc := Location{}
 	data := json.NewDecoder(req.Body)
 	data.Decode(&loc)
@@ -163,7 +171,7 @@ func CheckUser(user Users) bool {
 }
 
 func PositionValid(message *Message, location *Location) bool {
-	var zone float64 = 0.0000200
+	var zone float64 = 1.0005200
 
 	if (location.Latitude-message.Position.Latitude) < zone || (location.Latitude-message.Position.Latitude) > (zone-zone*2) && (location.Latitude-message.Position.Latitude) < zone {
 		if (location.Longitude-message.Position.Longitude) < zone || (location.Longitude-message.Position.Longitude) > (zone-zone*2) && (location.Longitude-message.Position.Longitude) < zone {
