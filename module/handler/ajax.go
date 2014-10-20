@@ -3,7 +3,6 @@ package handler
 import (
 	"encoding/json"
 	"github.com/squiidz/stamp/module/logger"
-	//"log"
 	"net/http"
 )
 
@@ -26,10 +25,6 @@ func InsertMessageHandler(rw http.ResponseWriter, req *http.Request) {
 	message := Message{}
 	data := json.NewDecoder(req.Body)
 	data.Decode(&message)
-
-	//log.Println("New Message for : ", message.To[0].Username)
-
-	logger.CheckErr(err, "ERROR AT CONNECTING TO DB")
 
 	go MCol.Insert(&message)
 }

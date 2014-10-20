@@ -1,14 +1,13 @@
 package handler
 
 import (
+	"github.com/gorilla/sessions"
+	"github.com/squiidz/stamp/module/logger"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"html/template"
 	"net/http"
 	"time"
-
-	"github.com/gorilla/sessions"
-	"github.com/squiidz/stamp/module/logger"
 )
 
 type Users struct {
@@ -17,7 +16,7 @@ type Users struct {
 	Password string
 	Create   time.Time
 	Update   time.Time
-	Friends  []Friend
+	Friends  []string
 }
 
 type Friend struct {
@@ -31,9 +30,10 @@ type Location struct {
 
 type Message struct {
 	From     Users
-	To       []Users
+	To       []string
 	Message  string
 	Position Location
+	Picture  string
 }
 
 const (
@@ -60,6 +60,7 @@ var (
 )
 
 func init() {
+	TemplatesLocation["profil"] = "template/profil.html"
 	TemplatesLocation["login"] = "template/login.html"
 	TemplatesLocation["register"] = "template/register.html"
 	TemplatesLocation["index"] = "template/index.html"
@@ -112,9 +113,20 @@ func RegisterHandler(rw http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func ProfilHandler(rw http.ResponseWriter, req *http.Request) {
+	session, _ := Store.Get(req, "sessionCookie")
+	data := session.Values["name"].(string)
+	connUser := FindUser(data)
+
+	Templates.ExecuteTemplate(rw, "profil.html", *connUser)
+	logger.SimpleLog(req)
+}
+
 func IndexHandler(rw http.ResponseWriter, req *http.Request) {
 	session, _ := Store.Get(req, "sessionCookie")
 	data := session.Values["name"].(string)
-	Templates.ExecuteTemplate(rw, "index.html", data)
+	connUser := FindUser(data)
+
+	Templates.ExecuteTemplate(rw, "index.html", *connUser)
 	logger.SimpleLog(req)
 }

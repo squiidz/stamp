@@ -20,6 +20,7 @@ func main() {
 	mux.HandleFunc("/", hand.LoginHandler)
 	mux.HandleFunc("/register", hand.RegisterHandler)
 	mux.HandleFunc("/home", hand.IndexHandler)
+	mux.HandleFunc("/profil", hand.ProfilHandler)
 	mux.HandleFunc("/save", hand.SaveHandler)
 	mux.HandleFunc("/insert", hand.InsertMessageHandler)
 	mux.HandleFunc("/location", hand.LocationHandler)

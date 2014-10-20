@@ -49,16 +49,15 @@
 				From: {
 					Username: $('#active').val(),
 				},
-				To: [{
-						Username: $("#friendName").val(),
-					},
-				],
+				To: $("#friendName").val(),
 				Message: $("#message").val(),
 				Position : {
 					Longitude: position.coords.longitude,
 					Latitude: position.coords.latitude
-				}
+				},
+				Picture: "empty",
 			};
+			console.log($scope.place.Picture);
 			$http.post('insert', $scope.place).success(function() {
 				$.notify("Message Sent Successfuly !!")
 				$("#friendName").val("");
@@ -75,10 +74,9 @@
 			var current_position = position.coords;
 			//console.log($scope.messages);
 			$http.post('location', current_position).success(function(data) {
-				console.log(data);
 				if(data.Message) {
 					$scope.messages.push(data);
-					//console.log(data);
+					console.log(data);
 				};
 			});
 			//console.log("COORDS SENT");
@@ -110,5 +108,8 @@
 
 
 	});
+	
+	app.controller('Profil', function($scope, $http) {
 
+	});
 })();

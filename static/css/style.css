@@ -30,7 +30,7 @@ h2 {
 	margin-bottom: 40px;
 }
 
-#signup {
+#rightcorner {
 	margin-left: 95%;
 	margin-top: -150px;
 	padding-left: 15px;
@@ -49,6 +49,7 @@ h2 {
 	margin-left: 35%;
 }
 #message {
+	margin-top: 20px;
 	resize: vertical;
 }
 
