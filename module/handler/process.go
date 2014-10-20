@@ -1,15 +1,21 @@
 package handler
 
 import (
+	"encoding/json"
+	"github.com/squiidz/stamp/module/logger"
 	"gopkg.in/mgo.v2/bson"
 	"log"
+	"net/http"
+)
+
+const (
+	SmallZone float64 = 0.0005200
+	MedZone   float64 = 0.0012000
+	BigZone   float64 = 1.0005200
 )
 
 func CheckUser(user Users) bool {
-	if err != nil {
-		log.Println("Cannot connect to Database")
-	}
-	err = UCol.Find(bson.M{"user": user.Username, "password": user.Password}).One(&user)
+	err = UCol.Find(bson.M{"username": user.Username, "password": user.Password}).One(&user)
 	if err != nil {
 		return false
 	} else {
@@ -17,23 +23,38 @@ func CheckUser(user Users) bool {
 	}
 }
 
-func PositionValid(message *Message, location *Location) bool {
-	var zone float64 = 1.0005200
+func CheckMessage(username *string, loc *Location, rw *http.ResponseWriter) {
+	var messCheck = make(chan bool, 10)
+	m := []Message{}
+
+	err := MCol.Find(bson.M{"to.username": username}).All(&m)
+	logger.CheckErr(err, "CANNOT FIND MESSAGE")
+
+	// Encode to Json messages found
+	enco := json.NewEncoder(*rw)
+	//log.Println("MESSAGE COUNT : ", len(m))
+
+	// Loop over all find messages
+	for _, mess := range m {
+		go PositionValid(&mess, loc, messCheck)
+		if <-messCheck {
+			enco.Encode(&mess)
+			MCol.Remove(bson.M{"to.username": username, "message": mess.Message})
+		}
+	}
+}
+
+func PositionValid(message *Message, location *Location, check chan bool) {
+	var zone float64 = BigZone
 
 	if (location.Latitude-message.Position.Latitude) < zone || (location.Latitude-message.Position.Latitude) > (zone-zone*2) && (location.Latitude-message.Position.Latitude) < zone {
 		if (location.Longitude-message.Position.Longitude) < zone || (location.Longitude-message.Position.Longitude) > (zone-zone*2) && (location.Longitude-message.Position.Longitude) < zone {
-			/*log.Println("TRUE")
-			fmt.Printf("DIFF LAT: %.6f\n", (location.Latitude - message.Latitude))
-			fmt.Printf("DIFF LONG: %.6f\n", (location.Longitude - message.Longitude))*/
-			return true
+			log.Println("TRUE")
+			check <- true
 		} else {
-			/*fmt.Printf("DIFF : %.6f\n", (location.Longitude - message.Longitude))
-			log.Println("LONGITUDE FALSE")*/
-			return false
+			check <- false
 		}
 	} else {
-		/*fmt.Printf("DIFF : %.6f\n", (location.Latitude - message.Latitude))
-		log.Println("LATITUDE FALSE")*/
-		return false
+		check <- false
 	}
 }

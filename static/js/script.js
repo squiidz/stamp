@@ -1,5 +1,5 @@
 (function() {
-	var app = angular.module('lifestamp', []);
+	var app = angular.module('stamp', []);
 
 	app.controller('BuildPage', function($scope, $http, $interval) {
 		$scope.place;
@@ -37,18 +37,12 @@
 			};
 		};
 
-		/*$scope.getMessage = function() {
-			if (navigator.geolocation && $scope.newTag) {
-				navigator.geolocation.getCurrentPosition(sendMessage, errorPosition);
-			} else {
-				$scope.notification = {
-					 visible: true,
-					 text: "Browser not Compatible"
-				};
-				$scope.$apply();
-			};
-		};*/
-
+		$scope.saveMessage = function(message) {
+			console.log(message);
+			$http.post('save', message).success(function() {
+				$.notify("Message save Successfuly !!");
+			});
+		};
 
 		var sendMessage = function(position) {
 			$scope.place = {
@@ -65,7 +59,7 @@
 					Latitude: position.coords.latitude
 				}
 			};
-			$http.post('place', $scope.place).success(function() {
+			$http.post('insert', $scope.place).success(function() {
 				$.notify("Message Sent Successfuly !!")
 				$("#friendName").val("");
 				$("#message").val("");
@@ -79,18 +73,30 @@
 
 		var sendPosition = function(position) {
 			var current_position = position.coords;
-			console.log($scope.messages);
+			//console.log($scope.messages);
 			$http.post('location', current_position).success(function(data) {
 				console.log(data);
 				if(data.Message) {
 					$scope.messages.push(data);
-					console.log(data);
+					//console.log(data);
 				};
 			});
-			console.log("COORDS SENT");
+			//console.log("COORDS SENT");
 		};
-
-
+/*
+		var findIndex = function(value, array) {
+			for(var i = 0; i < array.length; i++) {
+				console.log(array[i].Message);
+				if (array[i].Message === value) {
+					console.log(array[i].Message);
+					return array[i];
+				}else {
+					return null;
+					console.log("VALUE NOT FIND");
+				};
+			};
+		};
+*/
 		$interval(function() {
 			$scope.getPosition();
 		}, 2500); // Refresh Time

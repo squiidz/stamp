@@ -2,64 +2,43 @@ package handler
 
 import (
 	"encoding/json"
-	"gopkg.in/mgo.v2/bson"
-	"log"
+	"github.com/squiidz/stamp/module/logger"
+	//"log"
 	"net/http"
 )
 
 // Check User Position , and return Message if they exist for the current location
 func LocationHandler(rw http.ResponseWriter, req *http.Request) {
-	m := []Message{}
-	sessionC, err := Store.Get(req, "sessionCookie")
-
-	log.Println("[+] Session Name Value : ", sessionC.Values["name"].(string)) // Print Cookie Name Value for debuggin
-
-	if err != nil {
-		log.Println("COOKIE DOESN'T EXIST")
-	}
-	username := sessionC.Values["name"].(string)
 	loc := Location{}
 	data := json.NewDecoder(req.Body)
 	data.Decode(&loc)
 
-	if err != nil {
-		log.Println("ERROR AT CONNECTING TO DB")
-	}
+	sessionC, err := Store.Get(req, "sessionCookie")
+	logger.CheckErr(err, "COOKIE DOESN'T EXIST")
+	username := sessionC.Values["name"].(string)
 
-	err = MCol.Find(bson.M{"to.username": username}).All(&m)
-
-	if err != nil {
-		log.Println("CANNOT FIND MESSAGE")
-		log.Println(err) // Return nothing if no messages
-	}
-
-	// Encode to Json messages found
-	enco := json.NewEncoder(rw)
-	for _, mess := range m {
-		if PositionValid(&mess, &loc) {
-			log.Println(username, " #", len(m))
-			enco.Encode(&mess)
-			MCol.Remove(bson.M{"to.username": username, "message": mess.Message})
-			/*
-				log.Println("{Message Position}")
-				log.Println("[Lat] : ",mess.Latitude, "[Long] : ", mess.Longitude)
-				log.Println("{User Postion}")
-				log.Println("[Lat] : ", loc.Latitude, "[Long] : ", loc.Longitude)
-			*/
-		}
-	}
+	//log.Println("[+] Session Name Value : ", username) // Print Cookie Name Value for debuggin
+	CheckMessage(&username, &loc, &rw)
 }
 
 // Insert New Message to Database
-func PlaceHandler(rw http.ResponseWriter, req *http.Request) {
+func InsertMessageHandler(rw http.ResponseWriter, req *http.Request) {
 	message := Message{}
 	data := json.NewDecoder(req.Body)
 	data.Decode(&message)
 
-	log.Println("New Message for : ", message.To[0].Username)
+	//log.Println("New Message for : ", message.To[0].Username)
 
-	if err != nil {
-		log.Println("ERROR AT CONNECTING TO DB")
-	}
-	MCol.Insert(&message)
+	logger.CheckErr(err, "ERROR AT CONNECTING TO DB")
+
+	go MCol.Insert(&message)
+}
+
+// Save Messages
+func SaveHandler(rw http.ResponseWriter, req *http.Request) {
+	message := Message{}
+	decode := json.NewDecoder(req.Body)
+	decode.Decode(&message)
+	// Insert Message in Persistant Database
+	go MSav.Insert(&message)
 }

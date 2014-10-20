@@ -18,8 +18,10 @@ func init() {
 
 func main() {
 	mux.HandleFunc("/", hand.LoginHandler)
+	mux.HandleFunc("/register", hand.RegisterHandler)
 	mux.HandleFunc("/home", hand.IndexHandler)
-	mux.HandleFunc("/place", hand.PlaceHandler)
+	mux.HandleFunc("/save", hand.SaveHandler)
+	mux.HandleFunc("/insert", hand.InsertMessageHandler)
 	mux.HandleFunc("/location", hand.LocationHandler)
 
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
