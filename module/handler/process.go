@@ -8,11 +8,15 @@ import (
 	"net/http"
 )
 
-const (
-	SmallZone float64 = 0.0005200
-	MedZone   float64 = 0.0012000
-	BigZone   float64 = 1.0005200
+var (
+	Zone = map[string]float64{}
 )
+
+func init() {
+	Zone["small"] = float64(0.0005200)
+	Zone["medium"] = float64(0.0012000)
+	Zone["big"] = float64(1.0005200)
+}
 
 func CheckUser(user Users) bool {
 	err = UCol.Find(bson.M{"username": user.Username, "password": user.Password}).One(&user)
@@ -23,20 +27,21 @@ func CheckUser(user Users) bool {
 	}
 }
 
-func FindUser(username string) *Users {
-	user := Users{}
-	err := UCol.Find(bson.M{"username": username}).One(&user)
+func (u *Users) FindUser() {
+	//user := Users{}
+	err := UCol.Find(bson.M{"username": u.Username}).One(u)
+	log.Println(u.Username)
 	if err != nil {
 		logger.CheckErr(err, "CANNOT FIND CONNECTED USER")
 	}
-	return &user
+	//return &user
 }
 
 func CheckMessage(username *string, loc *Location, rw *http.ResponseWriter) {
 	var messCheck = make(chan bool, 10)
 	m := []Message{}
 
-	err := MCol.Find(bson.M{"to": username}).All(&m)
+	err := MCol.Find(bson.M{"to.username": username}).All(&m)
 	logger.CheckErr(err, "CANNOT FIND MESSAGE")
 
 	// Encode to Json messages found
@@ -48,14 +53,13 @@ func CheckMessage(username *string, loc *Location, rw *http.ResponseWriter) {
 		go PositionValid(&mess, loc, messCheck)
 		if <-messCheck {
 			enco.Encode(&mess)
-			MCol.Update(bson.M{"message": mess.Message}, bson.M{"$pull": bson.M{"to": *username}})
-			go CheckIfEmpty(&mess)
+			MCol.Remove(bson.M{"to.username": username, "message": mess.Message})
 		}
 	}
 }
 
 func PositionValid(message *Message, location *Location, check chan bool) {
-	var zone float64 = BigZone
+	zone := Zone["big"]
 
 	if (location.Latitude-message.Position.Latitude) < zone || (location.Latitude-message.Position.Latitude) > (zone-zone*2) && (location.Latitude-message.Position.Latitude) < zone {
 		if (location.Longitude-message.Position.Longitude) < zone || (location.Longitude-message.Position.Longitude) > (zone-zone*2) && (location.Longitude-message.Position.Longitude) < zone {
@@ -69,9 +73,8 @@ func PositionValid(message *Message, location *Location, check chan bool) {
 	}
 }
 
-func CheckIfEmpty(m *Message) {
-	err := MCol.Remove(bson.M{"from.username": m.From.Username, "message": m.Message, "to": bson.M{"$size": 0}})
-	if err != nil {
-		logger.CheckErr(err, "CANT DELETE MESSAGE")
-	}
+func CookieValue(req *http.Request, cookie string) string {
+	session, _ := Store.Get(req, cookie)
+	data := session.Values["name"].(string)
+	return data
 }

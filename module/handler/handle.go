@@ -114,18 +114,20 @@ func RegisterHandler(rw http.ResponseWriter, req *http.Request) {
 }
 
 func ProfilHandler(rw http.ResponseWriter, req *http.Request) {
-	session, _ := Store.Get(req, "sessionCookie")
-	data := session.Values["name"].(string)
-	connUser := FindUser(data)
+	connUser := &Users{
+		Username: CookieValue(req, "sessionCookie"),
+	}
+	connUser.FindUser()
 
 	Templates.ExecuteTemplate(rw, "profil.html", *connUser)
 	logger.SimpleLog(req)
 }
 
 func IndexHandler(rw http.ResponseWriter, req *http.Request) {
-	session, _ := Store.Get(req, "sessionCookie")
-	data := session.Values["name"].(string)
-	connUser := FindUser(data)
+	connUser := &Users{
+		Username: CookieValue(req, "sessionCookie"),
+	}
+	connUser.FindUser()
 
 	Templates.ExecuteTemplate(rw, "index.html", *connUser)
 	logger.SimpleLog(req)
