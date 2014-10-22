@@ -2,9 +2,9 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/squiidz/stamp/module/logger"
 	"io/ioutil"
-	//"log"
 	"net/http"
 	"time"
 )
@@ -49,5 +49,9 @@ func AddFriendHandler(rw http.ResponseWriter, req *http.Request) {
 
 	username := CookieValue(req, "sessionCookie")
 
-	UpdateFriendList(username, string(friendData))
+	err = UpdateFriendList(username, string(friendData))
+	if err != nil {
+		logger.CheckErr(err, "USER "+string(friendData)+" DOESN'T EXISTS !")
+		fmt.Fprintf(rw, "non-valid")
+	}
 }

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/squiidz/stamp/module/logger"
 	"gopkg.in/mgo.v2/bson"
 	"log"
@@ -27,14 +28,14 @@ func CheckUser(user Users) bool {
 	}
 }
 
-func (u *Users) FindUser() {
-	//user := Users{}
+func (u *Users) FindUser() error {
 	err := UCol.Find(bson.M{"username": u.Username}).One(u)
 	log.Println(u.Username)
 	if err != nil {
 		logger.CheckErr(err, "CANNOT FIND CONNECTED USER")
+		return err
 	}
-	//return &user
+	return nil
 }
 
 func CheckMessage(username *string, loc *Location, rw *http.ResponseWriter) {
@@ -64,13 +65,27 @@ func (m *Message) UpdateMessage(username string) {
 	MCol.Remove(bson.M{"message": m.Message, "to": bson.M{"$size": "0"}})
 }
 
-func UpdateFriendList(username string, friend string) {
-	if friend != "" {
-		err := UCol.Update(bson.M{"username": username}, bson.M{"$push": bson.M{"friends": friend}})
-		logger.CheckErr(err, "CANNOT UPDATE USER FRIEND LIST")
+func UpdateFriendList(username string, friend string) error {
+	user := Users{}
+	mUs := Users{}
+	err := UCol.Find(bson.M{"username": friend}).One(&user)
+	if err != nil {
+		return err
 	} else {
-		log.Println("Friend Name = ", friend)
+		err = UCol.Find(bson.M{"username": username}).One(&mUs)
+		valid := false
+		for _, f := range mUs.Friends {
+			if f == friend {
+				valid = true
+				return errors.New("Friend Already added")
+			}
+		}
+		if !valid {
+			err = UCol.Update(bson.M{"username": username}, bson.M{"$push": bson.M{"friends": friend}})
+			logger.CheckErr(err, "CANNOT UPDATE USER FRIEND LIST")
+		}
 	}
+	return nil
 }
 
 func PositionValid(message *Message, location *Location, check chan bool) {

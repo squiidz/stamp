@@ -17,6 +17,7 @@ type Users struct {
 	Create   time.Time
 	Update   time.Time
 	Friends  []string
+	Pending  []string // Friend Request Pending
 }
 
 type Friend struct {
@@ -118,7 +119,10 @@ func ProfilHandler(rw http.ResponseWriter, req *http.Request) {
 	connUser := &Users{
 		Username: CookieValue(req, "sessionCookie"),
 	}
-	connUser.FindUser()
+	err := connUser.FindUser()
+	if err != nil {
+		http.Redirect(rw, req, "/", http.StatusFound)
+	}
 
 	Templates.ExecuteTemplate(rw, "profil.html", *connUser)
 	logger.SimpleLog(req)
@@ -128,7 +132,10 @@ func IndexHandler(rw http.ResponseWriter, req *http.Request) {
 	connUser := &Users{
 		Username: CookieValue(req, "sessionCookie"),
 	}
-	connUser.FindUser()
+	err := connUser.FindUser()
+	if err != nil {
+		http.Redirect(rw, req, "/", http.StatusFound)
+	}
 
 	Templates.ExecuteTemplate(rw, "index.html", *connUser)
 	logger.SimpleLog(req)

@@ -46,8 +46,12 @@
 
 		$scope.addFriend = function() {
 			var friendName = $("#addFriend").val();
-			$http.post("addfriend", friendName).success(function() {
-				$.notify(friendName + " added !!")
+			$http.post("addfriend", friendName).success(function(response) {
+				if (response != "non-valid") {
+					$.notify(friendName + " added !!");
+				}else {
+					$.notify(friendName + " doesn't exists or already added");
+				};
 			});
 		};
 
