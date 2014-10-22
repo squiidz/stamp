@@ -41,21 +41,27 @@ func CheckMessage(username *string, loc *Location, rw *http.ResponseWriter) {
 	var messCheck = make(chan bool, 10)
 	m := []Message{}
 
-	err := MCol.Find(bson.M{"to.username": username}).All(&m)
+	err := MCol.Find(bson.M{"to": username}).All(&m)
 	logger.CheckErr(err, "CANNOT FIND MESSAGE")
 
 	// Encode to Json messages found
 	enco := json.NewEncoder(*rw)
-	//log.Println("MESSAGE COUNT : ", len(m))
+	log.Println("MESSAGE COUNT : ", len(m))
 
 	// Loop over all find messages
 	for _, mess := range m {
 		go PositionValid(&mess, loc, messCheck)
 		if <-messCheck {
 			enco.Encode(&mess)
-			MCol.Remove(bson.M{"to.username": username, "message": mess.Message})
+			mess.UpdateMessage(*username)
 		}
 	}
+}
+
+func (m *Message) UpdateMessage(username string) {
+	err := MCol.Update(bson.M{"message": m.Message}, bson.M{"$pull": bson.M{"to": username}})
+	logger.CheckErr(err, "Cannot Update Message")
+	MCol.Remove(bson.M{"message": m.Message, "to": bson.M{"$size": "0"}})
 }
 
 func PositionValid(message *Message, location *Location, check chan bool) {
