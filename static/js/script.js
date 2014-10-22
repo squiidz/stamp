@@ -44,6 +44,13 @@
 			});
 		};
 
+		$scope.addFriend = function() {
+			var friendName = $("#addFriend").val();
+			$http.post("addfriend", friendName).success(function() {
+				$.notify(friendName + " added !!")
+			});
+		};
+
 		var sendMessage = function(position) {
 			$scope.place = {
 				From: {

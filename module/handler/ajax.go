@@ -3,7 +3,10 @@ package handler
 import (
 	"encoding/json"
 	"github.com/squiidz/stamp/module/logger"
+	"io/ioutil"
+	//"log"
 	"net/http"
+	"time"
 )
 
 // Check User Position , and return Message if they exist for the current location
@@ -26,6 +29,7 @@ func InsertMessageHandler(rw http.ResponseWriter, req *http.Request) {
 	data := json.NewDecoder(req.Body)
 	data.Decode(&message)
 
+	message.Create = time.Now()
 	go MCol.Insert(&message)
 }
 
@@ -36,4 +40,14 @@ func SaveHandler(rw http.ResponseWriter, req *http.Request) {
 	decode.Decode(&message)
 	// Insert Message in Persistant Database
 	go MSav.Insert(&message)
+}
+
+// Add friend
+func AddFriendHandler(rw http.ResponseWriter, req *http.Request) {
+	friendData, err := ioutil.ReadAll(req.Body)
+	logger.CheckErr(err, "CANNOT ADD FRIEND")
+
+	username := CookieValue(req, "sessionCookie")
+
+	UpdateFriendList(username, string(friendData))
 }

@@ -17,6 +17,8 @@
 		<div class="display" ng-controller="BuildPage as build">
 			<div class="jumbotron">
 				<h1 class="logo" >#!Stamp</h1>
+				<input type="search" id="addFriend" placeholder="add friend" required/>
+				<button class="btn btn-success" type="button" ng-click="addFriend()">add</button>
 				<a href="/profil"><button id="rightcorner" type="button" class="btn btn-success">profil</button></a>
 				<p id="headword">Welcome back ((.Username))</p>
 				<input id="active" value="((.Username))" hidden/>
@@ -42,6 +44,8 @@
 					<h3>New Message</h3>
 					<div class="box animated bounceInRight" ng-repeat="message in messages">
 						<h4>From : {{message.From.Username}}</h4>
+						<h5>Date : {{message.Create}}</h5>
+						</br>
 						<blockquote id="content">{{message.Message}}</blockquote>
 						<!-- <img src="{{message.Picture}}"/> -->
 						<button ng-click='saveMessage(message)' type="button" class="btn btn-primary form-control">Save</button>

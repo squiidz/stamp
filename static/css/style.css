@@ -44,6 +44,11 @@ h2 {
 	padding: 15px;
 }
 
+#addFriend {
+	margin-top: -40px;
+	color: #424242;
+}
+
 #friendName, #message{
 	width: 30%;
 	margin-left: 35%;

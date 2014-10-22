@@ -64,6 +64,15 @@ func (m *Message) UpdateMessage(username string) {
 	MCol.Remove(bson.M{"message": m.Message, "to": bson.M{"$size": "0"}})
 }
 
+func UpdateFriendList(username string, friend string) {
+	if friend != "" {
+		err := UCol.Update(bson.M{"username": username}, bson.M{"$push": bson.M{"friends": friend}})
+		logger.CheckErr(err, "CANNOT UPDATE USER FRIEND LIST")
+	} else {
+		log.Println("Friend Name = ", friend)
+	}
+}
+
 func PositionValid(message *Message, location *Location, check chan bool) {
 	zone := Zone["big"]
 

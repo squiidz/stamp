@@ -32,6 +32,7 @@ type Message struct {
 	From     Users
 	To       []string
 	Message  string
+	Create   time.Time
 	Position Location
 	Picture  string
 }
