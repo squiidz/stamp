@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	Zone = map[string]float64{}
+	Zone = make(map[string]float64)
 )
 
 func init() {
@@ -21,6 +21,16 @@ func init() {
 
 func CheckUser(user Users) bool {
 	err = UCol.Find(bson.M{"username": user.Username, "password": user.Password}).One(&user)
+	if err != nil {
+		return false
+	} else {
+		return true
+	}
+}
+
+func UserExist(username string) bool {
+	user := Users{}
+	err = UCol.Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		return false
 	} else {

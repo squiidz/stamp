@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	hand "github.com/squiidz/stamp/module/handler"
+	mid "github.com/squiidz/stamp/module/middle"
 	"net/http"
 )
 
@@ -17,14 +18,14 @@ func init() {
 }
 
 func main() {
-	mux.HandleFunc("/", hand.LoginHandler)
-	mux.HandleFunc("/register", hand.RegisterHandler)
-	mux.HandleFunc("/home", hand.IndexHandler)
-	mux.HandleFunc("/profil", hand.ProfilHandler)
-	mux.HandleFunc("/addfriend", hand.AddFriendHandler)
-	mux.HandleFunc("/save", hand.SaveHandler)
-	mux.HandleFunc("/insert", hand.InsertMessageHandler)
-	mux.HandleFunc("/location", hand.LocationHandler)
+	mux.Handle("/", http.HandlerFunc(hand.LoginHandler))
+	mux.Handle("/register", http.HandlerFunc(hand.RegisterHandler))
+	mux.Handle("/home", mid.AuthMiddle(http.HandlerFunc(hand.IndexHandler), "sessionCookie"))
+	mux.Handle("/profil", mid.AuthMiddle(http.HandlerFunc(hand.ProfilHandler), "sessionCookie"))
+	mux.Handle("/addfriend", http.HandlerFunc(hand.AddFriendHandler))
+	mux.Handle("/save", http.HandlerFunc(hand.SaveHandler))
+	mux.Handle("/insert", http.HandlerFunc(hand.InsertMessageHandler))
+	mux.Handle("/location", mid.AuthMiddle(http.HandlerFunc(hand.LocationHandler), "sessionCookie"))
 
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
