@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="static/css/animate.css">
+        <link rel="stylesheet" type="text/css" href="static/css/style.css">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="static/js/angular.min.js"></script>
+    </head>
+    <body>
+        <div class="display">
+            <div class="jumbotron">
+             <h1 class="logo">#!Stamp</h1>
+             <a href="/register"><button id="rightcorner" type="button" class="btn btn-success">signup</button></a>
+                <div class="container">     
+                    <h2 class="animated bounceInDown" id="headword">Welcome to #!Stamp !</h2>
+                    <form class="form-signin" method="POST" action="/login">
+                        <input class="form-control" name="username" type="text" placeholder="username" required/>
+                        <input class="form-control" name="password" type="password" placeholder="password" required/>
+                        <button id="sendTagBtn" type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

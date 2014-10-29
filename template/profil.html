@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html ng-app="stamp">
+	<head>
+		<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="static/css/animate.css">
+		<link rel="stylesheet" type="text/css" href="static/css/style.css">
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="static/js/angular.min.js"></script>
+		<script type="text/javascript" src="static/js/notify.min.js"></script>
+		<script type="text/javascript" src="static/js/script.js"></script>
+	</head>
+	<body>
+		<div class="display" ng-controller="Profil as profil">
+			<div class="jumbotron">
+				<h1 class="logo" >#!Stamp</h1>
+				<p id="headword">Profil of ((.Username))</p>
+			</div>
+			<div class="box">
+				<h3>Friends</h3>
+					((range .Friends))
+					<div>
+						<h4>((.))</h4>
+					</div>
+					((end))
+			</div>
+		</div>
+	</body>
+</html>
