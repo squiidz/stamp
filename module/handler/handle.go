@@ -1,84 +1,14 @@
 package handler
 
 import (
-
-	//"github.com/gorilla/sessions"
-	"github.com/squiidz/stamp/module/logger"
-	//"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
-	//"html/template"
-	"github.com/gorilla/sessions"
-	"github.com/squiidz/stamp/module/logger"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
-	"html/template"
-
+	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/go-zoo/bone"
+	"github.com/squiidz/stamp/module/logger"
+	"gopkg.in/mgo.v2/bson"
 )
-
-type Users struct {
-	Username string
-	Email    string
-	Password string
-	Create   time.Time
-	Update   time.Time
-	Friends  []string
-	Pending  []string // Friend Request Pending
-}
-
-type Friend struct {
-	Name string
-}
-
-type Location struct {
-	Longitude float64
-	Latitude  float64
-}
-
-type Message struct {
-	From     Users
-	To       []string
-	Message  string
-	Create   time.Time
-	Position Location
-	Picture  string
-}
-
-const (
-	MongoServerAddr         = "192.168.0.104"
-	RedisServerAddr         = "192.168.0.104"
-	TemplateFolder          = "/template"
-	StaticFolder            = "/static"
-	SessionTTL      float64 = 5.00
-)
-
-var (
-	MongoSession, err = mgo.Dial(MongoServerAddr)
-
-	MDB  = MongoSession.DB("message")
-	MCol = MDB.C("new")
-	MSav = MDB.C("save")
-
-	UDB  = MongoSession.DB("account")
-	UCol = UDB.C("user")
-
-	TemplatesLocation = map[string]string{}
-	Templates         = template.New("main")
-	Store             = sessions.NewCookieStore([]byte("BigBangBazooka"))
-)
-
-func init() {
-	TemplatesLocation["profil"] = "template/profil.html"
-	TemplatesLocation["login"] = "template/login.html"
-	TemplatesLocation["register"] = "template/register.html"
-	TemplatesLocation["index"] = "template/index.html"
-
-	Templates.Delims("((", "))")
-	for _, value := range TemplatesLocation {
-		Templates.ParseFiles(value)
-	}
-}
 
 func LoginHandler(rw http.ResponseWriter, req *http.Request) {
 	if req.Method == "GET" {
@@ -92,7 +22,7 @@ func LoginHandler(rw http.ResponseWriter, req *http.Request) {
 			session, _ := Store.Get(req, "sessionCookie")
 			session.Values["name"] = user.Username
 			session.Save(req, rw)
-			http.Redirect(rw, req, "/home", http.StatusFound)
+			http.Redirect(rw, req, "/home/"+user.Username, http.StatusFound)
 		} else {
 			http.Redirect(rw, req, "/", http.StatusFound)
 		}
@@ -143,7 +73,7 @@ func IndexHandler(rw http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		http.Redirect(rw, req, "/", http.StatusFound)
 	}
-
+	fmt.Println(bone.GetValue(req, "id"))
 	Templates.ExecuteTemplate(rw, "index.html", *connUser)
 	logger.SimpleLog(req)
 }

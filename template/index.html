@@ -2,23 +2,23 @@
 <html ng-app="stamp">
 	<head>
 		<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-		<link rel="stylesheet" type="text/css" href="static/css/animate.css">
-		<link rel="stylesheet" type="text/css" href="static/css/bootstrap-select.min.css">
-		<link rel="stylesheet" type="text/css" href="static/css/style.css">
+		<link rel="stylesheet" type="text/css" href="/static/css/animate.css">
+		<link rel="stylesheet" type="text/css" href="/static/css/bootstrap-select.min.css">
+		<link rel="stylesheet" type="text/css" href="/static/css/style.css">
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="static/js/angular.min.js"></script>
-		<script type="text/javascript" src="static/js/notify.min.js"></script>
-		<script type="text/javascript" src="static/js/bootstrap-select.min.js"></script>
-		<script type="text/javascript" src="static/js/script.js"></script>
+		<script type="text/javascript" src="/static/js/angular.min.js"></script>
+		<script type="text/javascript" src="/static/js/notify.min.js"></script>
+		<script type="text/javascript" src="/static/js/bootstrap-select.min.js"></script>
+		<script type="text/javascript" src="/static/js/script.js"></script>
 	</head>
 	<body>
 		<div class="display" ng-controller="BuildPage as build">
 			<div class="jumbotron">
-				<h1 class="logo" >#!Stamp</h1>
+				<h1 class="logo">#!Stamp</h1>
 				<a href="/profil"><button id="rightcorner" type="button" class="btn btn-success">profil</button></a>
-				<input type="search" id="addFriend" placeholder="add friend" required/>
+				<input class="" type="search" id="addFriend" placeholder="username" required/>
 				<button class="btn btn-success" type="button" ng-click="addFriend()">add</button>
 				<p id="headword">Welcome back ((.Username))</p>
 				<input id="active" value="((.Username))" hidden/>

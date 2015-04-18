@@ -3,13 +3,18 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
+
+	"github.com/go-zoo/bone"
+	"github.com/go-zoo/claw"
+	"github.com/go-zoo/claw/mw"
+
 	hand "github.com/squiidz/stamp/module/handler"
 	mid "github.com/squiidz/stamp/module/middle"
-	"net/http"
 )
 
 var port string
-var mux = http.NewServeMux()
+var mux = bone.New()
 
 func init() {
 	portFlag := flag.String("port", "8080", "-port [8080]")
@@ -18,14 +23,16 @@ func init() {
 }
 
 func main() {
-	mux.Handle("/", http.HandlerFunc(hand.LoginHandler))
-	mux.Handle("/register", http.HandlerFunc(hand.RegisterHandler))
-	mux.Handle("/home", mid.AuthMiddle(http.HandlerFunc(hand.IndexHandler), "sessionCookie"))
-	mux.Handle("/profil", mid.AuthMiddle(http.HandlerFunc(hand.ProfilHandler), "sessionCookie"))
-	mux.Handle("/addfriend", http.HandlerFunc(hand.AddFriendHandler))
-	mux.Handle("/save", http.HandlerFunc(hand.SaveHandler))
-	mux.Handle("/insert", http.HandlerFunc(hand.InsertMessageHandler))
-	mux.Handle("/location", mid.AuthMiddle(http.HandlerFunc(hand.LocationHandler), "sessionCookie"))
+	cl := claw.New(mw.Logger)
+
+	mux.Handle("/", cl.Use(hand.LoginHandler))
+	mux.Handle("/register", cl.Use(hand.RegisterHandler))
+	mux.Handle("/home/:id", mid.AuthMiddle(cl.Use(hand.IndexHandler), "sessionCookie"))
+	mux.Handle("/profil", mid.AuthMiddle(cl.Use(hand.ProfilHandler), "sessionCookie"))
+	mux.Post("/addfriend", cl.Use(hand.AddFriendHandler))
+	mux.Post("/save", cl.Use(hand.SaveHandler))
+	mux.Post("/insert", cl.Use(hand.InsertMessageHandler))
+	mux.Post("/location", mid.AuthMiddle(cl.Use(hand.LocationHandler), "sessionCookie"))
 
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 

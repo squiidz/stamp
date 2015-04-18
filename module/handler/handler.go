@@ -39,7 +39,7 @@ type Message struct {
 }
 
 const (
-	MongoServerAddr         = "192.168.0.104"
+	MongoServerAddr         = "localhost"
 	RedisServerAddr         = "192.168.0.104"
 	TemplateFolder          = "/template"
 	StaticFolder            = "/static"

@@ -39,14 +39,14 @@
 
 		$scope.saveMessage = function(message) {
 			console.log(message);
-			$http.post('save', message).success(function() {
+			$http.post('/save', message).success(function() {
 				$.notify("Message save Successfuly !!");
 			});
 		};
 
 		$scope.addFriend = function() {
 			var friendName = $("#addFriend").val();
-			$http.post("addfriend", friendName).success(function(response) {
+			$http.post("/addfriend", friendName).success(function(response) {
 				if (response != "non-valid") {
 					$.notify(friendName + " added !!");
 				}else {
@@ -69,7 +69,7 @@
 				Picture: "empty",
 			};
 			console.log($scope.place.Picture);
-			$http.post('insert', $scope.place).success(function() {
+			$http.post('/insert', $scope.place).success(function() {
 				$.notify("Message Sent Successfuly !!")
 				$("#friendName").val("");
 				$("#message").val("");
@@ -84,7 +84,7 @@
 		var sendPosition = function(position) {
 			var current_position = position.coords;
 			//console.log($scope.messages);
-			$http.post('location', current_position).success(function(data) {
+			$http.post('/location', current_position).success(function(data) {
 				if(data.Message) {
 					$scope.messages.push(data);
 					console.log(data);
