@@ -1,9 +1,5 @@
-<ion-view view-title="Playlists">
-  <ion-content>
-    <ion-list>
-      <ion-item ng-repeat="playlist in playlists" href="#/app/playlists/{{playlist.id}}">
-        {{playlist.title}}
-      </ion-item>
-    </ion-list>
+<ion-view view-title="Map">
+  <ion-content ng-init="init()">
+  	<div id="map-canvas" data-tap-disabled="true"></div>
   </ion-content>
 </ion-view>
