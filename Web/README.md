@@ -1,7 +1,7 @@
 stamp
 =====
 
-Geolocation stamp application
+Stamp web client
 
 # Implementation #
 
