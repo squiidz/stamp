@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/sessions"
 	//"github.com/squiidz/stamp/module/logger"
 	"gopkg.in/mgo.v2"
-	//"gopkg.in/mgo.v2/bson"
+	"gopkg.in/mgo.v2/bson"
 	"html/template"
 )
 
@@ -30,16 +30,16 @@ type Friend struct {
 }
 
 type Location struct {
-	Longitude float64
-	Latitude  float64
+	Longitude float64 `json:"long"`
+	Latitude  float64 `json:"lat"`
 }
 
 type Message struct {
-	From     Users
+	From     Users `json:"from"`
 	To       []string
-	Message  string
+	Message  string `json:"message"`
 	Create   time.Time
-	Position Location
+	Position Location `json:"position"`
 	Picture  []byte
 }
 
@@ -66,8 +66,21 @@ var (
 	Store             = sessions.NewCookieStore([]byte("BigBangBazooka"))
 )
 
+func MessageHandler(rw http.ResponseWriter, req *http.Request) {
+	m := []Message{}
+	err := MCol.Find(bson.M{"to": "squiidz"}).All(&m)
+	if err != nil {
+		return
+	}
+	// Encode to Json messages found
+	rw.Header().Add("Access-Control-Allow-Origin", "*")
+	enco := json.NewEncoder(rw)
+	enco.Encode(m)
+}
+
 // Check User Position , and return Message if they exist for the current location
 func LocationHandler(rw http.ResponseWriter, req *http.Request) {
+	rw.Header().Add("Access-Control-Allow-Origin", "*")
 	loc := Location{}
 	data := json.NewDecoder(req.Body)
 	data.Decode(&loc)

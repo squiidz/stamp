@@ -77,10 +77,12 @@ angular.module('starter.controllers', [])
     }
 })
 
-.controller('MapCtrl', function($scope) {
+.controller('MapCtrl', function($scope, $http) {
     console.log("MapCtrl Loading !");
+    $scope.message = [];
 
     $scope.init = function() {
+        $scope.getMessage();
         var myLatlng = new google.maps.LatLng(37.3000, -120.4833);
  
         var mapOptions = {
@@ -94,12 +96,28 @@ angular.module('starter.controllers', [])
         navigator.geolocation.getCurrentPosition(function(pos) {
             map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
 
-            var myLocation = new google.maps.Marker({
-                position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude),
-                map: map,
-                title: "My Location"
-            });
-            
+            var markers = [];
+
+            for (var i = 0; i < $scope.message.length; i++) {
+              markers.push(new google.maps.Marker({
+                  position: new google.maps.LatLng($scope.message[i].position.lat, $scope.message[i].position.long),
+                  map: map,
+                  title: $scope.message[i].from.username
+              }));
+            };
+            for(var i = 0; i < markers.length; i++) {
+              google.maps.event.addListener(markers[i], 'click', function(data) {
+                console.log($scope.message[i-1]);
+                map.setCenter(markers[i-1].getPosition());
+              });
+            }
+
         });
+    };
+
+    $scope.getMessage = function() {
+      $http.get("http://192.168.1.111/message").success(function(data) {
+        $scope.message = data;
+      });
     };
 });

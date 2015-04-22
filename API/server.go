@@ -33,6 +33,7 @@ func main() {
 
 	muxx.Get("/friends", cw.Use(FriendsHandler))
 	muxx.Get("/profil", cw.Use(ProfilHandler))
+	muxx.Get("/message", cw.Use(MessageHandler))
 	//muxx.Handle("/", cw.Use(LoginHandler))
 	//muxx.Handle("/register", cw.Use(RegisterHandler))
 	//muxx.Handle("/home/:id", mid.AuthMiddle(cw.Use(IndexHandler), "sessionCookie"))
@@ -41,7 +42,7 @@ func main() {
 	muxx.Post("/addfriend", cw.Use(AddFriendHandler))
 	muxx.Post("/save", cw.Use(SaveHandler))
 	muxx.Post("/insert", cw.Use(InsertMessageHandler))
-	muxx.Post("/location", cw.Use(LocationHandler))
+	//muxx.Handle("/location", cw.Use(LocationHandler))
 
 	http.ListenAndServe("192.168.1.111:80", muxx)
 }
