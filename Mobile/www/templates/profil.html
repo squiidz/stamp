@@ -1,0 +1,12 @@
+<ion-view view-title="{{ profil.username }} Info">
+  <ion-content>
+  	<div>
+    	<h3> Username : {{ profil.username }}</h3>
+    	<h4> Email : {{ profil.email }}</h4>
+    	<div ng-repeat="friend in profil.friends">
+    		<h5> Friends : {{ friend }}</h5>
+    	</div>
+    </div>
+
+  </ion-content>
+</ion-view>

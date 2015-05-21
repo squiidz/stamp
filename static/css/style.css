@@ -16,6 +16,15 @@ h2 {
 	color: white;
 }
 
+a {
+	color: white;
+}
+
+a:hover {
+	color: white;
+	text-decoration: none;
+}
+
 #notification {
 	color: white;
 	text-align: center;
@@ -24,7 +33,7 @@ h2 {
 	margin-top: 5px;
 }
 
-#headword {
+.headword {
 	font-family: 'Shadows Into Light', cursive;
 	font-size: 34px;
 	margin-bottom: 40px;
@@ -58,10 +67,11 @@ h2 {
 	resize: vertical;
 }
 
-#sendTagBtn {
+.log-btn-group {
 	font-family: 'Maven Pro', sans-serif;
 	font-size: 18px;
 	margin-top: 15px;
+	margin-left: 40%;
 }
 
 #content {
@@ -70,17 +80,13 @@ h2 {
 
 .logo {
 	font-family: 'Shadows Into Light', cursive;
+	font-size: 42px;
 	color: white;
-	text-align: left;
-	margin-top: -40px;
-	margin-left: -15px;
+	text-align: center;
 }
 
-.jumbotron {
-	background-color: #404040; 
-    text-align: center;
-    padding-bottom: 40px;
-    border: 2px solid #424242;
+.form-signin {
+	padding-top: 10%;
 }
 
 .newTag {
@@ -108,4 +114,25 @@ h2 {
 .form-control {
 	width: 20%;
 	margin-left: 40%;
+}
+
+.contain {
+	display: block;
+}
+
+video {
+	position: fixed;
+	min-width: 100%;
+	min-height: 100%;
+	width: auto;
+	height: auto;
+	background: no-repeat;
+	background-size: cover;
+	z-index: -100;
+}
+
+.access-form {
+	position: relative;
+	display: block;
+	margin-top: 20%;
 }

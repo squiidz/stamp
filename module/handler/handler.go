@@ -35,15 +35,15 @@ type Message struct {
 	Message  string
 	Create   time.Time
 	Position Location
-	Picture  string
+	Picture  []byte
 }
 
 const (
-	MongoServerAddr         = "localhost"
-	RedisServerAddr         = "192.168.0.104"
-	TemplateFolder          = "/template"
-	StaticFolder            = "/static"
-	SessionTTL      float64 = 5.00
+	MongoServerAddr = "localhost"
+	RedisServerAddr = "192.168.0.104"
+	TemplateFolder  = "/template"
+	StaticFolder    = "/static"
+	SessionTTL      = 5.00
 )
 
 var (
