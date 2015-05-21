@@ -1,7 +1,7 @@
 package middle
 
 import (
-	hand "github.com/squiidz/stamp/module/handler"
+	hand "github.com/squiidz/stamp/Web/module/handler"
 	"net/http"
 )
 

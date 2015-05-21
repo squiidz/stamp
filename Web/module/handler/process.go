@@ -3,10 +3,11 @@ package handler
 import (
 	"encoding/json"
 	"errors"
-	"github.com/squiidz/stamp/module/logger"
 	"gopkg.in/mgo.v2/bson"
 	"log"
 	"net/http"
+
+	"github.com/squiidz/stamp/Web/module/logger"
 )
 
 var (

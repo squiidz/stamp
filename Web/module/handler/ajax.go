@@ -3,10 +3,11 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/squiidz/stamp/module/logger"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/squiidz/stamp/Web/module/logger"
 )
 
 // Check User Position , and return Message if they exist for the current location

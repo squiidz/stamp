@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/go-zoo/bone"
-	"github.com/squiidz/stamp/module/logger"
+	"github.com/squiidz/stamp/Web/module/logger"
 	"gopkg.in/mgo.v2/bson"
 )
 

@@ -39,7 +39,7 @@ type Message struct {
 }
 
 const (
-	MongoServerAddr         = "localhost"
+	MongoServerAddr         = "mongo-stamp-1.squiidz.cont.tutum.io:49157"
 	RedisServerAddr         = "192.168.0.104"
 	TemplateFolder          = "/template"
 	StaticFolder            = "/static"

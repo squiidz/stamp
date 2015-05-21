@@ -9,8 +9,8 @@ import (
 	"github.com/go-zoo/claw"
 	"github.com/go-zoo/claw/mw"
 
-	hand "github.com/squiidz/stamp/module/handler"
-	mid "github.com/squiidz/stamp/module/middle"
+	hand "github.com/squiidz/stamp/Web/module/handler"
+	mid "github.com/squiidz/stamp/Web/module/middle"
 )
 
 var port string
