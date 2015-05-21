@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 stamp
 =====
 
@@ -26,8 +25,3 @@ Geolocation stamp application
 + Possibility to send messages at multiple friends in one stamp
 + Create account add friends with facebook API ..?
 + All versions connected to the same service
-=======
-# stamp
-
-Stamp primary repo
->>>>>>> 09d4e8b9703085c654599b690ac2eb66fceb82d6
