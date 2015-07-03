@@ -44,7 +44,7 @@ func main() {
 	muxx.Post("/insert", cw.Use(InsertMessageHandler))
 	//muxx.Handle("/location", cw.Use(LocationHandler))
 
-	http.ListenAndServe("192.168.1.111:80", muxx)
+  http.ListenAndServe(port, muxx)
 }
 
 func FriendsHandler(rw http.ResponseWriter, req *http.Request) {
